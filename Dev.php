@@ -41,5 +41,5 @@ $array = [
 // Dump array to the screen with print_r (default)
 Dev::dump($array);
 
-// Dump array to the screen with var_dump (default)
+// Dump array to the screen with var_dump
 Dev::dump($array, 'var_dump');
