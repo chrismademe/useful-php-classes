@@ -68,8 +68,14 @@ class Triggers {
      * Add Action
      */
     public function addAction( $trigger, $action ) {
-        if ( in_array($trigger, $this->triggers) ) {
-            $this->actions[$trigger][] = $action;
+        if ( is_array($action) ) {
+            foreach( $action as $act ) {
+                $this->addAction($trigger, $act);
+            }
+        } else {
+            if ( in_array($trigger, $this->triggers) ) {
+                $this->actions[$trigger][] = $action;
+            }
         }
     }
 
