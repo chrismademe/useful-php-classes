@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Triggers:
+ * WordPress style actions and triggers (hooks)
+ */
+
 namespace Triggers;
 
 class Triggers {
@@ -7,12 +12,12 @@ class Triggers {
     /**
      * Triggers array
      */
-    protected $triggers = [];
+    private $triggers = [];
 
     /**
      * Actions array
      */
-    protected $actions  = [];
+    private $actions  = [];
 
     /**
      * Construct
