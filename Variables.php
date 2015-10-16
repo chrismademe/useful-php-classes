@@ -7,6 +7,9 @@
 
 namespace Variables;
 
+error_reporting(E_ALL);
+ini_set('display_errors', 'on');
+
 class Variables {
 
     /**
@@ -15,7 +18,7 @@ class Variables {
      * and so are not settable from outside
      * of the class
      */
-    private $core;
+    private $core = [];
 
     /**
      * Construct
@@ -35,7 +38,7 @@ class Variables {
      * Return value of variable
      */
     public function __get( $variable ) {
-        if ( property_exists($variable, $this) ) {
+        if ( property_exists($this, $variable) ) {
             return $this->$variable;
         }
     }
@@ -70,6 +73,21 @@ class Variables {
         }
     }
 
+    /**
+     * Remove Variable
+     */
+    public function removeVar( $variable ) {
+        if ( is_array($variable) ) {
+            foreach ( $variable as $var ) {
+                $this->removeVar($var);
+            }
+        } else {
+            if ( !in_array($variable, $this->core) && property_exists($this, $variable) ) {
+                unset($this->$variable);
+            }
+        }
+    }
+
 }
 
 /********************************
@@ -96,3 +114,9 @@ $variables->addVar('goodbye_world', 'See ya later!'); // will work
 
 // Echo goodbye_world
 echo $variables->goodbye_world; // See ya later!
+
+// Remove a variable
+$variables->removeVar('goodbye_world');
+
+// Echo goodbye_world
+echo $variables->goodbye_world; // doesn't exist anymore!
