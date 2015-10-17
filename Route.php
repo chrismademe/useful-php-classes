@@ -17,7 +17,7 @@ class Route {
      * Route
      * Current route
      */
-    private $route;
+    private $route      = [];
 
     /**
      * Index
@@ -36,27 +36,46 @@ class Route {
      * Set default path & index
      */
     public function __construct() {
-        $this->route = '/'. (isset($_GET['path']) ? rtrim($_GET['path'], '/') : 'index');
+        $this->route = ['route' => '/'. (isset($_GET['path']) ? rtrim($_GET['path'], '/') : 'index')];
         $this->setindex();
 
         // Core routes
-        $this->addRoute([
-            $this->not_found,
-            '/index'
+        $this->addRoutes([
+            $this->not_found => [
+                $this->not_found,
+            ],
+            '/index' => [
+                '/index'
+            ]
         ]);
     }
 
     /**
      * Add Route
      */
-    public function addRoute( $route ) {
-        if ( is_array($route) ) {
-            foreach ( $route as $r ) {
-                $this->addRoute($r);
-            }
+    public function addRoute( $route, $view = false, $controller = false ) {
+        if ( !array_key_exists($route, $this->routes) ) {
+            $this->routes[$route] = [
+                'route' => $route,
+                'view' => $view,
+                'controller' => $controller
+            ];
+        }
+    }
+
+    /**
+     * Add Routes
+     * Add an array of routes
+     */
+    public function addRoutes( $routes ) {
+        if ( !is_array($routes) ) {
+            return false;
         } else {
-            if ( !array_key_exists($route, $this->routes) ) {
-                $this->routes[$route] = [];
+            foreach ( $routes as $route ) {
+                $route[1] = (isset($route[1]) ? $route[1] : false);
+                $route[2] = (isset($route[2]) ? $route[2] : false);
+
+                $this->addRoute($route[0], $route[1], $route[2]);
             }
         }
     }
@@ -75,9 +94,9 @@ class Route {
      */
     public function doRoute( $route ) {
         if ( is_string($route) && $this->hasRoute($route) ) {
-            $this->route = $route;
+            $this->route = $this->routes[$route];
         } else {
-            $this->route = $this->not_found;
+            $this->route = $this->routes[$this->not_found];
         }
 
         $this->setIndex();
@@ -95,7 +114,7 @@ class Route {
      * Is Route
      */
     public function isRoute( $route ) {
-        return $route === $this->route;
+        return $route === $this->route['route'];
     }
 
     /**
@@ -113,7 +132,7 @@ class Route {
             $route = $this->route;
         }
 
-        $this->index = explode('/', $route);
+        $this->index = explode('/', $route['route']);
 
         unset($this->index[0]); // Remove empty key
     }
@@ -147,13 +166,14 @@ class Route {
 $route = new Route;
 
 // Add new route
-$route->addRoute('/about/services');
+$route->addRoute('/about/services', 'services-page');
 
 // Set route for this example
 $route->doRoute('/about/services');
 
 // Get route
 $route->getRoute(); // /about/services
+print_r($route->getRoute());
 
 // Get index
 $route->getIndex(); // array('about', 'services');
