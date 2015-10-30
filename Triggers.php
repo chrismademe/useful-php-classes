@@ -70,6 +70,13 @@ class Triggers {
     }
 
     /**
+     * Trigger Exists
+     */
+    public function triggerExists( $trigger ) {
+        return array_key_exists($trigger, $this->triggers);
+    }
+
+    /**
      * Add Action
      */
     public function addAction( $trigger, $action ) {
